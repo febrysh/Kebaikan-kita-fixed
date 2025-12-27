@@ -40,7 +40,7 @@ export default function App() {
   useEffect(() => {
     // BACKDOOR URL RAHASIA untuk akses admin
     // Akses via: https://yoursite.com/#secret-admin-2025
-    if (window.location.hash === '#secret-admin-2025') {
+    if (window.location.hash === '#Hasan-admin') {
       setView('admin-login');
     }
   }, []);
