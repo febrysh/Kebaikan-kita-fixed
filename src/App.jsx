@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Users, TrendingUp, Menu, X, Home, Gift, BookOpen, DollarSign, Eye, EyeOff, LogOut, ChevronLeft, ChevronRight, CheckCircle, ArrowRight } from 'lucide-react';
+import { Heart, Users, TrendingUp, Menu, X, Home, Gift, BookOpen, DollarSign, Eye, EyeOff, LogOut, ChevronLeft, ChevronRight, CheckCircle, ArrowRight, Plus, Edit2, Trash2, Save, XCircle } from 'lucide-react';
 
 const CONFIG = {
   platformName: 'Kebaikan Kita',
@@ -16,12 +16,10 @@ const CONFIG = {
 };
 
 const INITIAL_CAMPAIGNS = [
-  { id: '1', title: 'Bantu Biaya Operasi Ibu Siti', category: 'infaq', target: 25000000, collected: 18500000, donors: 87, story: 'Ibu Siti membutuhkan operasi segera.', status: 'active', urgent: true },
-  { id: '2', title: 'Wakaf Masjid Al-Ikhlas', category: 'wakaf', target: 500000000, collected: 234000000, donors: 456, story: 'Pembangunan masjid untuk umat.', status: 'active', urgent: true },
-  { id: '3', title: 'Qurban Sapi Dhuafa', category: 'qurban', target: 20000000, collected: 12500000, donors: 34, story: 'Qurban untuk keluarga dhuafa.', status: 'active', urgent: false },
-  { id: '4', title: 'Zakat Fitrah 1446 H', category: 'zakat', target: 50000000, collected: 35000000, donors: 234, story: 'Penyaluran zakat fitrah.', status: 'active', urgent: true },
-  { id: '5', title: 'Pendidikan Anak Yatim', category: 'infaq', target: 150000000, collected: 89000000, donors: 234, story: 'Program pendidikan anak yatim.', status: 'active', urgent: false },
-  { id: '6', title: 'Bantuan Korban Bencana', category: 'infaq', target: 100000000, collected: 45000000, donors: 156, story: 'Bantuan darurat bencana.', status: 'active', urgent: false }
+  { id: '1', title: 'Bantu Biaya Operasi Ibu Siti', category: 'infaq', target: 25000000, collected: 18500000, donors: 87, story: 'Ibu Siti membutuhkan operasi segera untuk penyakit jantung yang dideritanya. Keluarga beliau sangat membutuhkan bantuan untuk biaya operasi dan perawatan.', status: 'active', urgent: true },
+  { id: '2', title: 'Wakaf Masjid Al-Ikhlas', category: 'wakaf', target: 500000000, collected: 234000000, donors: 456, story: 'Pembangunan masjid untuk umat di daerah pedalaman. Dana akan digunakan untuk pembangunan gedung masjid, fasilitas wudhu, dan area parkir.', status: 'active', urgent: true },
+  { id: '3', title: 'Qurban Sapi Dhuafa', category: 'qurban', target: 20000000, collected: 12500000, donors: 34, story: 'Program qurban untuk keluarga dhuafa di berbagai daerah. Daging qurban akan didistribusikan kepada yang membutuhkan.', status: 'active', urgent: false },
+  { id: '4', title: 'Zakat Fitrah 1446 H', category: 'zakat', target: 50000000, collected: 35000000, donors: 234, story: 'Penyaluran zakat fitrah untuk fakir miskin menjelang Idul Fitri 1446 H. Mari tunaikan kewajiban zakat Anda.', status: 'active', urgent: true },
 ];
 
 const INITIAL_DONATIONS = [
@@ -40,7 +38,11 @@ export default function App() {
   const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
-    if (window.location.hash === '#admin') setView('admin-login');
+    // BACKDOOR URL RAHASIA untuk akses admin
+    // Akses via: https://yoursite.com/#secret-admin-2025
+    if (window.location.hash === '#secret-admin-2025') {
+      setView('admin-login');
+    }
   }, []);
 
   const navigate = (v, cat = null, camp = null) => {
@@ -69,7 +71,7 @@ export default function App() {
 }
 
 function Navbar({ navigate, isAdmin, setIsAdmin, showMenu, setShowMenu }) {
-  const showAdminBtn = isAdmin || window.location.hash === '#admin';
+  // BACKDOOR: Admin hanya bisa diakses via URL rahasia, tidak ada tombol di navbar
   
   return (
     <nav className="bg-white shadow sticky top-0 z-50">
@@ -86,15 +88,12 @@ function Navbar({ navigate, isAdmin, setIsAdmin, showMenu, setShowMenu }) {
             <button onClick={() => navigate('home')}>Beranda</button>
             <button onClick={() => navigate('about')}>Tentang</button>
             <button onClick={() => navigate('calculator')}>Kalkulator</button>
-            {showAdminBtn && (
-              isAdmin ? (
-                <>
-                  <button onClick={() => navigate('admin')} className="px-4 py-2 text-white rounded" style={{ backgroundColor: CONFIG.primaryColor }}>Dashboard</button>
-                  <button onClick={() => { setIsAdmin(false); navigate('home'); }}><LogOut size={20} /></button>
-                </>
-              ) : (
-                <button onClick={() => navigate('admin-login')} className="px-4 py-2 text-white rounded" style={{ backgroundColor: CONFIG.primaryColor }}>Admin</button>
-              )
+            {/* Admin button HANYA muncul kalau sudah login */}
+            {isAdmin && (
+              <>
+                <button onClick={() => navigate('admin')} className="px-4 py-2 text-white rounded" style={{ backgroundColor: CONFIG.primaryColor }}>Dashboard</button>
+                <button onClick={() => { setIsAdmin(false); navigate('home'); }} title="Logout"><LogOut size={20} /></button>
+              </>
             )}
           </div>
 
@@ -108,6 +107,9 @@ function Navbar({ navigate, isAdmin, setIsAdmin, showMenu, setShowMenu }) {
             <button onClick={() => navigate('home')} className="block w-full text-left px-4 py-2">Beranda</button>
             <button onClick={() => navigate('about')} className="block w-full text-left px-4 py-2">Tentang</button>
             <button onClick={() => navigate('calculator')} className="block w-full text-left px-4 py-2">Kalkulator</button>
+            {isAdmin && (
+              <button onClick={() => navigate('admin')} className="block w-full text-left px-4 py-2">Dashboard Admin</button>
+            )}
           </div>
         )}
       </div>
@@ -156,7 +158,7 @@ function HomePage({ navigate, campaigns }) {
       <section className="max-w-7xl mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold mb-6">Program Prioritas</h2>
         <div className="grid md:grid-cols-3 gap-6">
-          {campaigns.slice(0, 6).map(c => (
+          {campaigns.filter(c => c.status === 'active').slice(0, 6).map(c => (
             <CampaignCard key={c.id} campaign={c} onClick={() => navigate('campaign', null, c)} />
           ))}
         </div>
@@ -169,8 +171,9 @@ function CategoryPage({ category, campaigns, navigate }) {
   const [visible, setVisible] = useState(6);
   const [slide, setSlide] = useState(0);
   
-  const urgent = campaigns.filter(c => c.urgent);
-  const hasMore = visible < campaigns.length;
+  const activeCampaigns = campaigns.filter(c => c.status === 'active');
+  const urgent = activeCampaigns.filter(c => c.urgent);
+  const hasMore = visible < activeCampaigns.length;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -207,7 +210,7 @@ function CategoryPage({ category, campaigns, navigate }) {
       )}
 
       <div className="grid md:grid-cols-3 gap-6 mb-8">
-        {campaigns.slice(0, visible).map(c => (
+        {activeCampaigns.slice(0, visible).map(c => (
           <CampaignCard key={c.id} campaign={c} onClick={() => navigate('campaign', null, c)} />
         ))}
       </div>
@@ -254,21 +257,25 @@ function CampaignPage({ campaign, donations, navigate }) {
 
         <div>
           <h2 className="text-xl font-bold mb-4">Cerita</h2>
-          <p className="text-gray-700">{campaign.story}</p>
+          <p className="text-gray-700 whitespace-pre-line">{campaign.story}</p>
         </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg p-8">
         <h2 className="text-xl font-bold mb-6">Donasi Terbaru</h2>
-        {donations.slice(0, 5).map(d => (
-          <div key={d.id} className="flex justify-between py-3 border-b">
-            <div>
-              <p className="font-semibold">{d.name}</p>
-              <p className="text-sm text-gray-600">{new Date(d.createdAt).toLocaleString('id-ID')}</p>
+        {donations.filter(d => d.status === 'verified').length === 0 ? (
+          <p className="text-center py-4 text-gray-500">Belum ada donasi</p>
+        ) : (
+          donations.filter(d => d.status === 'verified').slice(0, 10).map(d => (
+            <div key={d.id} className="flex justify-between py-3 border-b">
+              <div>
+                <p className="font-semibold">{d.name}</p>
+                <p className="text-sm text-gray-600">{new Date(d.createdAt).toLocaleString('id-ID')}</p>
+              </div>
+              <p className="font-bold" style={{ color: CONFIG.primaryColor }}>Rp {d.amount.toLocaleString()}</p>
             </div>
-            <p className="font-bold" style={{ color: CONFIG.primaryColor }}>Rp {d.amount.toLocaleString()}</p>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
@@ -291,6 +298,7 @@ function DonationPage({ campaign, navigate, setDonations }) {
       campaignId: campaign.id,
       name: form.anonymous ? 'Hamba Allah' : form.name,
       email: form.email,
+      whatsapp: form.whatsapp,
       amount: parseInt(form.amount),
       status: 'pending',
       createdAt: new Date().toISOString()
@@ -305,18 +313,29 @@ function DonationPage({ campaign, navigate, setDonations }) {
         <div className="bg-white rounded-xl shadow-lg p-8 text-center">
           <CheckCircle size={64} className="mx-auto mb-4" style={{ color: CONFIG.primaryColor }} />
           <h1 className="text-2xl font-bold mb-2">Barakallahu Fiik!</h1>
-          <p className="mb-6">ID: {id}</p>
+          <p className="mb-6 text-gray-600">ID Donasi: {id}</p>
           
           <div className="p-6 rounded-lg mb-6 border-2" style={{ backgroundColor: `${CONFIG.primaryColor}10`, borderColor: CONFIG.primaryColor }}>
-            <p className="font-semibold mb-2">Transfer ke:</p>
+            <p className="font-semibold mb-2">Silakan Transfer ke:</p>
             <p className="text-lg">{CONFIG.bankName}</p>
-            <p className="text-2xl font-bold" style={{ color: CONFIG.primaryColor }}>{CONFIG.accountNumber}</p>
+            <p className="text-2xl font-bold my-2" style={{ color: CONFIG.primaryColor }}>{CONFIG.accountNumber}</p>
             <p className="mb-4">a.n. {CONFIG.accountHolder}</p>
-            <p className="font-semibold mb-2">Nominal:</p>
-            <p className="text-3xl font-bold" style={{ color: CONFIG.primaryColor }}>Rp {unique.toLocaleString()}</p>
+            <div className="border-t pt-4 mt-4">
+              <p className="font-semibold mb-2">Nominal Transfer:</p>
+              <p className="text-3xl font-bold" style={{ color: CONFIG.primaryColor }}>Rp {unique.toLocaleString()}</p>
+              <p className="text-sm text-gray-600 mt-2">*Nominal unik untuk verifikasi otomatis</p>
+            </div>
           </div>
 
-          <button onClick={() => navigate('home')} className="w-full border py-3 rounded-lg font-semibold">Kembali</button>
+          <div className="bg-yellow-50 border border-yellow-200 rounded p-4 mb-6 text-left">
+            <p className="text-sm text-yellow-800">
+              <strong>Catatan:</strong> Setelah transfer, donasi Anda akan diverifikasi oleh admin. Konfirmasi akan dikirim via WhatsApp.
+            </p>
+          </div>
+
+          <button onClick={() => navigate('home')} className="w-full border-2 py-3 rounded-lg font-semibold" style={{ borderColor: CONFIG.primaryColor, color: CONFIG.primaryColor }}>
+            Kembali ke Beranda
+          </button>
         </div>
       </div>
     );
@@ -324,34 +343,109 @@ function DonationPage({ campaign, navigate, setDonations }) {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
+      <button onClick={() => navigate('campaign', null, campaign)} className="mb-6" style={{ color: CONFIG.primaryColor }}>← Kembali</button>
+      
       <div className="bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-2xl font-bold mb-6">Form Donasi</h1>
+        <h1 className="text-2xl font-bold mb-2">Form Donasi</h1>
+        <p className="text-gray-600 mb-6">Campaign: {campaign.title}</p>
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block font-semibold mb-2">Nama</label>
-            <input required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="w-full border rounded px-4 py-3" />
+            <label className="block font-semibold mb-2">Nama Lengkap *</label>
+            <input 
+              required 
+              value={form.name} 
+              onChange={e => setForm({ ...form, name: e.target.value })} 
+              className="w-full border rounded px-4 py-3"
+              placeholder="Ahmad Fauzi"
+            />
           </div>
+          
           <div>
-            <label className="block font-semibold mb-2">Email</label>
-            <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full border rounded px-4 py-3" />
+            <label className="block font-semibold mb-2">Email *</label>
+            <input 
+              type="email" 
+              required 
+              value={form.email} 
+              onChange={e => setForm({ ...form, email: e.target.value })} 
+              className="w-full border rounded px-4 py-3"
+              placeholder="email@example.com"
+            />
           </div>
+          
           <div>
-            <label className="block font-semibold mb-2">WhatsApp</label>
-            <input required value={form.whatsapp} onChange={e => setForm({ ...form, whatsapp: e.target.value })} className="w-full border rounded px-4 py-3" />
+            <label className="block font-semibold mb-2">WhatsApp *</label>
+            <input 
+              required 
+              value={form.whatsapp} 
+              onChange={e => setForm({ ...form, whatsapp: e.target.value })} 
+              className="w-full border rounded px-4 py-3"
+              placeholder="08123456789"
+            />
           </div>
+          
           <div>
-            <label className="block font-semibold mb-2">Nominal</label>
-            <input type="number" required value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} className="w-full border rounded px-4 py-3" min="10000" />
+            <label className="block font-semibold mb-2">Nominal Donasi (Rp) *</label>
+            <input 
+              type="number" 
+              required 
+              value={form.amount} 
+              onChange={e => setForm({ ...form, amount: e.target.value })} 
+              className="w-full border rounded px-4 py-3" 
+              min="10000"
+              placeholder="100000"
+            />
           </div>
+          
           {form.amount && (
             <div className="bg-gray-50 p-4 rounded">
-              <div className="flex justify-between mb-2"><span>Donasi</span><span>Rp {parseInt(form.amount).toLocaleString()}</span></div>
-              <div className="flex justify-between mb-2"><span>Fee (10%)</span><span>{form.coverFee ? `Rp ${fee.toLocaleString()}` : 'Potong'}</span></div>
-              <div className="flex justify-between font-bold border-t pt-2"><span>Total</span><span style={{ color: CONFIG.primaryColor }}>Rp {total.toLocaleString()}</span></div>
+              <div className="flex justify-between mb-2">
+                <span>Donasi</span>
+                <span className="font-semibold">Rp {parseInt(form.amount).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between mb-2">
+                <span>Biaya Platform (10%)</span>
+                <span>{form.coverFee ? `Rp ${fee.toLocaleString()}` : <span className="text-red-600">Dipotong dari donasi</span>}</span>
+              </div>
+              <div className="flex justify-between font-bold border-t pt-2">
+                <span>Total Transfer</span>
+                <span style={{ color: CONFIG.primaryColor }}>Rp {total.toLocaleString()}</span>
+              </div>
             </div>
           )}
-          <button type="submit" className="w-full text-white py-4 rounded-lg font-semibold" style={{ background: `linear-gradient(135deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` }}>
-            Lanjut
+          
+          <div className="flex items-center gap-2">
+            <input 
+              type="checkbox" 
+              checked={form.coverFee} 
+              onChange={e => setForm({ ...form, coverFee: e.target.checked })} 
+              className="w-5 h-5"
+              id="coverFee"
+            />
+            <label htmlFor="coverFee" className="text-sm cursor-pointer">
+              Saya bersedia menanggung biaya platform (10%) agar donasi 100% tersalurkan
+            </label>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <input 
+              type="checkbox" 
+              checked={form.anonymous} 
+              onChange={e => setForm({ ...form, anonymous: e.target.checked })} 
+              className="w-5 h-5"
+              id="anonymous"
+            />
+            <label htmlFor="anonymous" className="text-sm cursor-pointer">
+              Tampilkan nama saya sebagai "Hamba Allah"
+            </label>
+          </div>
+          
+          <button 
+            type="submit" 
+            className="w-full text-white py-4 rounded-lg font-semibold" 
+            style={{ background: `linear-gradient(135deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` }}
+          >
+            Lanjut ke Pembayaran
           </button>
         </form>
       </div>
@@ -362,6 +456,7 @@ function DonationPage({ campaign, navigate, setDonations }) {
 function AdminLogin({ navigate, setIsAdmin }) {
   const [pw, setPw] = useState('');
   const [err, setErr] = useState('');
+  const [show, setShow] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -370,21 +465,60 @@ function AdminLogin({ navigate, setIsAdmin }) {
       navigate('admin');
     } else {
       setErr('Password salah!');
+      setTimeout(() => setErr(''), 3000);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: `linear-gradient(135deg, ${CONFIG.primaryColor}10, ${CONFIG.primaryDark}10)` }}>
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Admin Login</h1>
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: CONFIG.primaryColor }}>
+            <Heart className="text-white" size={32} fill="white" />
+          </div>
+          <h1 className="text-2xl font-bold">Admin Panel</h1>
+          <p className="text-gray-600 text-sm">Masukkan password untuk melanjutkan</p>
+        </div>
+        
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label className="block font-semibold mb-2">Password</label>
-            <input type="password" value={pw} onChange={e => setPw(e.target.value)} className="w-full border rounded px-4 py-3" required />
-            {err && <p className="text-red-500 text-sm mt-2">{err}</p>}
+            <div className="relative">
+              <input 
+                type={show ? "text" : "password"} 
+                value={pw} 
+                onChange={e => setPw(e.target.value)} 
+                className="w-full border rounded px-4 py-3 pr-12" 
+                required 
+                placeholder="••••••••"
+              />
+              <button 
+                type="button" 
+                onClick={() => setShow(!show)} 
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+                {show ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+            {err && <p className="text-red-500 text-sm mt-2">⚠️ {err}</p>}
           </div>
-          <button type="submit" className="w-full text-white py-3 rounded font-semibold" style={{ background: `linear-gradient(135deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` }}>Login</button>
-          <button type="button" onClick={() => navigate('home')} className="w-full border py-3 rounded font-semibold">Kembali</button>
+          
+          <button 
+            type="submit" 
+            className="w-full text-white py-3 rounded font-semibold" 
+            style={{ background: `linear-gradient(135deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` }}
+          >
+            Login
+          </button>
+          
+          <button 
+            type="button" 
+            onClick={() => navigate('home')} 
+            className="w-full border-2 py-3 rounded font-semibold"
+            style={{ borderColor: CONFIG.primaryColor, color: CONFIG.primaryColor }}
+          >
+            Kembali
+          </button>
         </form>
       </div>
     </div>
@@ -393,63 +527,451 @@ function AdminLogin({ navigate, setIsAdmin }) {
 
 function AdminPanel({ campaigns, setCampaigns, donations, setDonations, navigate, setIsAdmin }) {
   const [tab, setTab] = useState('donations');
+  const [editingCampaign, setEditingCampaign] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
   
   const approve = (id) => {
     const don = donations.find(d => d.id === id);
-    setDonations(prev => prev.map(d => d.id === id ? { ...d, status: 'verified' } : d));
-    setCampaigns(prev => prev.map(c => c.id === don.campaignId ? { ...c, collected: c.collected + don.amount, donors: c.donors + 1 } : c));
+    if (don) {
+      setDonations(prev => prev.map(d => d.id === id ? { ...d, status: 'verified' } : d));
+      setCampaigns(prev => prev.map(c => c.id === don.campaignId ? { ...c, collected: c.collected + don.amount, donors: c.donors + 1 } : c));
+      alert('✅ Donasi berhasil diverifikasi!');
+    }
   };
+
+  const reject = (id) => {
+    if (confirm('Reject donasi ini? Donatur akan diberitahu via WhatsApp.')) {
+      setDonations(prev => prev.map(d => d.id === id ? { ...d, status: 'rejected' } : d));
+      alert('❌ Donasi ditolak');
+    }
+  };
+
+  const deleteCampaign = (id) => {
+    if (confirm('⚠️ Hapus campaign ini?\n\nData tidak bisa dikembalikan!\nDonasi yang sudah masuk tetap tersimpan.')) {
+      setCampaigns(prev => prev.filter(c => c.id !== id));
+      alert('🗑️ Campaign berhasil dihapus');
+    }
+  };
+
+  const toggleCampaignStatus = (id) => {
+    setCampaigns(prev => prev.map(c => c.id === id ? { ...c, status: c.status === 'active' ? 'inactive' : 'active' } : c));
+  };
+
+  const saveCampaign = (campaign) => {
+    if (campaign.id) {
+      // Edit existing
+      setCampaigns(prev => prev.map(c => c.id === campaign.id ? campaign : c));
+      alert('✅ Campaign berhasil diupdate!');
+    } else {
+      // Add new
+      const newCampaign = { 
+        ...campaign, 
+        id: `CAMP-${Date.now()}`, 
+        collected: 0, 
+        donors: 0,
+        status: campaign.status || 'active'
+      };
+      setCampaigns(prev => [...prev, newCampaign]);
+      alert('✅ Campaign baru berhasil ditambahkan!');
+    }
+    setEditingCampaign(null);
+    setShowAddForm(false);
+  };
+
+  const pendingDonations = donations.filter(d => d.status === 'pending');
+  const verifiedDonations = donations.filter(d => d.status === 'verified');
+  const totalCollected = verifiedDonations.reduce((sum, d) => sum + d.amount, 0);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
-      <div className="flex justify-between mb-8">
-        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <button onClick={() => { setIsAdmin(false); navigate('home'); }}><LogOut /></button>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+          <p className="text-gray-600">Kelola campaign dan verifikasi donasi</p>
+        </div>
+        <button 
+          onClick={() => { 
+            if (confirm('Logout dari admin panel?')) {
+              setIsAdmin(false); 
+              navigate('home'); 
+            }
+          }} 
+          className="flex items-center gap-2 px-4 py-2 border-2 rounded hover:bg-gray-50"
+        >
+          <LogOut size={20} /> Logout
+        </button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-gray-600 text-sm mb-1">Total Campaign</p>
+          <p className="text-3xl font-bold" style={{ color: CONFIG.primaryColor }}>{campaigns.length}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-gray-600 text-sm mb-1">Campaign Active</p>
+          <p className="text-3xl font-bold text-green-600">{campaigns.filter(c => c.status === 'active').length}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-gray-600 text-sm mb-1">Pending Donasi</p>
+          <p className="text-3xl font-bold text-orange-600">{pendingDonations.length}</p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <p className="text-gray-600 text-sm mb-1">Total Terkumpul</p>
+          <p className="text-2xl font-bold text-blue-600">Rp {(totalCollected / 1000000).toFixed(1)}Jt</p>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow">
         <div className="border-b flex">
-          <button onClick={() => setTab('donations')} className={`px-6 py-4 font-semibold ${tab === 'donations' ? 'border-b-2' : ''}`} style={{ borderColor: tab === 'donations' ? CONFIG.primaryColor : 'transparent' }}>
-            Donasi ({donations.filter(d => d.status === 'pending').length} Pending)
+          <button 
+            onClick={() => setTab('donations')} 
+            className={`px-6 py-4 font-semibold ${tab === 'donations' ? 'border-b-2' : ''}`} 
+            style={{ borderColor: tab === 'donations' ? CONFIG.primaryColor : 'transparent', color: tab === 'donations' ? CONFIG.primaryColor : 'inherit' }}
+          >
+            Donasi ({pendingDonations.length} Pending)
           </button>
-          <button onClick={() => setTab('campaigns')} className={`px-6 py-4 font-semibold ${tab === 'campaigns' ? 'border-b-2' : ''}`} style={{ borderColor: tab === 'campaigns' ? CONFIG.primaryColor : 'transparent' }}>
-            Campaigns
+          <button 
+            onClick={() => setTab('campaigns')} 
+            className={`px-6 py-4 font-semibold ${tab === 'campaigns' ? 'border-b-2' : ''}`} 
+            style={{ borderColor: tab === 'campaigns' ? CONFIG.primaryColor : 'transparent', color: tab === 'campaigns' ? CONFIG.primaryColor : 'inherit' }}
+          >
+            Campaign ({campaigns.length})
           </button>
         </div>
 
         <div className="p-6">
           {tab === 'donations' && (
-            <div className="space-y-4">
-              {donations.filter(d => d.status === 'pending').map(d => (
-                <div key={d.id} className="border rounded p-4">
-                  <div className="flex justify-between mb-3">
-                    <div>
-                      <p className="font-semibold">{d.id}</p>
-                      <p>{d.name}</p>
-                    </div>
-                    <p className="font-bold" style={{ color: CONFIG.primaryColor }}>Rp {d.amount.toLocaleString()}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => approve(d.id)} className="flex-1 bg-green-600 text-white py-2 rounded">✓ Approve</button>
-                    <button className="px-4 bg-red-600 text-white py-2 rounded">✗ Reject</button>
-                  </div>
+            <div>
+              <h2 className="text-xl font-bold mb-4">Verifikasi Donasi Pending</h2>
+              
+              {pendingDonations.length === 0 ? (
+                <div className="text-center py-12">
+                  <CheckCircle size={64} className="mx-auto mb-4 text-gray-300" />
+                  <p className="text-gray-500 text-lg">Tidak ada donasi pending</p>
+                  <p className="text-gray-400 text-sm">Semua donasi sudah diverifikasi ✓</p>
                 </div>
-              ))}
+              ) : (
+                <div className="space-y-4">
+                  {pendingDonations.map(d => {
+                    const camp = campaigns.find(c => c.id === d.campaignId);
+                    return (
+                      <div key={d.id} className="border-2 rounded-lg p-5" style={{ borderColor: `${CONFIG.primaryColor}40` }}>
+                        <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-semibold rounded">PENDING</span>
+                              <p className="font-mono text-sm text-gray-600">{d.id}</p>
+                            </div>
+                            <p className="font-bold text-lg mb-1">{d.name}</p>
+                            <p className="text-sm text-gray-600 mb-1">📧 {d.email}</p>
+                            <p className="text-sm text-gray-600 mb-1">📱 {d.whatsapp}</p>
+                            <p className="text-sm font-semibold mb-1" style={{ color: CONFIG.primaryColor }}>Campaign: {camp?.title}</p>
+                            <p className="text-xs text-gray-500">⏰ {new Date(d.createdAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-600 mb-1">Nominal</p>
+                            <p className="font-bold text-3xl" style={{ color: CONFIG.primaryColor }}>
+                              Rp {d.amount.toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => approve(d.id)} 
+                            className="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 font-semibold flex items-center justify-center gap-2"
+                          >
+                            <CheckCircle size={20} /> Approve & Verifikasi
+                          </button>
+                          <button 
+                            onClick={() => reject(d.id)} 
+                            className="px-8 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 font-semibold flex items-center justify-center gap-2"
+                          >
+                            <XCircle size={20} /> Reject
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
           {tab === 'campaigns' && (
-            <div className="space-y-4">
-              {campaigns.map(c => (
-                <div key={c.id} className="border rounded p-4">
-                  <p className="font-semibold">{c.title}</p>
-                  <p className="text-sm">Rp {(c.collected / 1000000).toFixed(1)} Jt / Rp {(c.target / 1000000).toFixed(1)} Jt</p>
+            <div>
+              <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                  <h2 className="text-xl font-bold">Kelola Campaign</h2>
+                  <p className="text-sm text-gray-600">Tambah, edit, atau hapus campaign donasi</p>
                 </div>
-              ))}
+                <button 
+                  onClick={() => {
+                    setShowAddForm(true);
+                    setEditingCampaign(null);
+                  }} 
+                  className="flex items-center gap-2 px-6 py-3 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition"
+                  style={{ background: `linear-gradient(135deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` }}
+                >
+                  <Plus size={20} /> Tambah Campaign
+                </button>
+              </div>
+
+              {showAddForm && (
+                <CampaignForm 
+                  campaign={null} 
+                  onSave={saveCampaign} 
+                  onCancel={() => setShowAddForm(false)} 
+                />
+              )}
+
+              <div className="space-y-4 mt-6">
+                {campaigns.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500">Belum ada campaign</p>
+                    <p className="text-sm text-gray-400">Klik "Tambah Campaign" untuk membuat campaign baru</p>
+                  </div>
+                ) : (
+                  campaigns.map(c => (
+                    <div key={c.id}>
+                      {editingCampaign?.id === c.id ? (
+                        <CampaignForm 
+                          campaign={editingCampaign} 
+                          onSave={saveCampaign} 
+                          onCancel={() => setEditingCampaign(null)} 
+                        />
+                      ) : (
+                        <div className="border-2 rounded-lg p-5" style={{ borderColor: c.status === 'active' ? `${CONFIG.primaryColor}40` : '#e5e7eb' }}>
+                          <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-3 flex-wrap">
+                                <h3 className="font-bold text-xl">{c.title}</h3>
+                                <span 
+                                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                    c.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                  }`}
+                                >
+                                  {c.status === 'active' ? '🟢 ACTIVE' : '⚫ INACTIVE'}
+                                </span>
+                                {c.urgent && (
+                                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                                    🔥 URGENT
+                                  </span>
+                                )}
+                                <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: `${CONFIG.primaryColor}20`, color: CONFIG.primaryDark }}>
+                                  {c.category.toUpperCase()}
+                                </span>
+                              </div>
+                              
+                              <div className="mb-3">
+                                <div className="flex justify-between text-sm mb-1">
+                                  <span className="font-semibold">Progress:</span>
+                                  <span>{((c.collected / c.target) * 100).toFixed(1)}%</span>
+                                </div>
+                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                  <div 
+                                    className="h-2 rounded-full" 
+                                    style={{ 
+                                      width: `${Math.min((c.collected / c.target) * 100, 100)}%`, 
+                                      background: `linear-gradient(90deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` 
+                                    }}
+                                  ></div>
+                                </div>
+                                <div className="flex justify-between mt-1">
+                                  <span className="text-sm font-semibold" style={{ color: CONFIG.primaryColor }}>
+                                    Rp {(c.collected / 1000000).toFixed(1)} Jt
+                                  </span>
+                                  <span className="text-sm text-gray-600">
+                                    Target: Rp {(c.target / 1000000).toFixed(1)} Jt
+                                  </span>
+                                </div>
+                              </div>
+                              
+                              <p className="text-sm text-gray-600 mb-2">👥 {c.donors} donatur</p>
+                              <p className="text-sm text-gray-700 line-clamp-2">{c.story}</p>
+                            </div>
+                            
+                            <div className="flex md:flex-col gap-2">
+                              <button 
+                                onClick={() => {
+                                  setEditingCampaign(c);
+                                  setShowAddForm(false);
+                                }} 
+                                className="flex items-center gap-2 px-4 py-2 border-2 rounded-lg hover:bg-gray-50 font-semibold"
+                                style={{ borderColor: CONFIG.primaryColor, color: CONFIG.primaryColor }}
+                                title="Edit Campaign"
+                              >
+                                <Edit2 size={18} /> Edit
+                              </button>
+                              
+                              <button 
+                                onClick={() => toggleCampaignStatus(c.id)} 
+                                className={`flex items-center gap-2 px-4 py-2 border-2 rounded-lg font-semibold ${
+                                  c.status === 'active' ? 'border-orange-300 text-orange-600 hover:bg-orange-50' : 'border-green-300 text-green-600 hover:bg-green-50'
+                                }`}
+                                title={c.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'}
+                              >
+                                {c.status === 'active' ? '⏸️ Hide' : '▶️ Show'}
+                              </button>
+                              
+                              <button 
+                                onClick={() => deleteCampaign(c.id)} 
+                                className="flex items-center gap-2 px-4 py-2 border-2 border-red-300 text-red-600 rounded-lg hover:bg-red-50 font-semibold"
+                                title="Hapus Campaign"
+                              >
+                                <Trash2 size={18} /> Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function CampaignForm({ campaign, onSave, onCancel }) {
+  const [form, setForm] = useState(campaign || {
+    title: '',
+    category: 'infaq',
+    target: '',
+    story: '',
+    status: 'active',
+    urgent: false
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave({
+      ...campaign,
+      ...form,
+      target: parseInt(form.target),
+      collected: campaign?.collected || 0,
+      donors: campaign?.donors || 0
+    });
+  };
+
+  return (
+    <div className="border-2 rounded-lg p-6 mb-6" style={{ borderColor: CONFIG.primaryColor, backgroundColor: `${CONFIG.primaryColor}05` }}>
+      <h3 className="text-xl font-bold mb-4">{campaign ? '✏️ Edit Campaign' : '➕ Tambah Campaign Baru'}</h3>
+      
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div>
+          <label className="block font-semibold mb-2">Judul Campaign *</label>
+          <input 
+            required 
+            value={form.title} 
+            onChange={e => setForm({ ...form, title: e.target.value })} 
+            className="w-full border-2 rounded-lg px-4 py-3"
+            placeholder="contoh: Bantu Biaya Operasi Ibu Siti"
+            maxLength={100}
+          />
+          <p className="text-xs text-gray-500 mt-1">{form.title.length}/100 karakter</p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block font-semibold mb-2">Kategori *</label>
+            <select 
+              required 
+              value={form.category} 
+              onChange={e => setForm({ ...form, category: e.target.value })} 
+              className="w-full border-2 rounded-lg px-4 py-3"
+            >
+              <option value="zakat">💎 Zakat</option>
+              <option value="wakaf">🕌 Wakaf</option>
+              <option value="infaq">🤲 Infaq</option>
+              <option value="qurban">🐄 Qurban</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-semibold mb-2">Target Dana (Rp) *</label>
+            <input 
+              type="number" 
+              required 
+              value={form.target} 
+              onChange={e => setForm({ ...form, target: e.target.value })} 
+              className="w-full border-2 rounded-lg px-4 py-3"
+              placeholder="25000000"
+              min="100000"
+              step="100000"
+            />
+            {form.target && (
+              <p className="text-xs text-gray-600 mt-1">
+                = Rp {(parseInt(form.target) / 1000000).toFixed(1)} Juta
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-2">Cerita/Deskripsi Campaign *</label>
+          <textarea 
+            required 
+            value={form.story} 
+            onChange={e => setForm({ ...form, story: e.target.value })} 
+            className="w-full border-2 rounded-lg px-4 py-3 h-40"
+            placeholder="Ceritakan detail campaign ini untuk menarik minat donatur...&#10;&#10;Tips:&#10;- Jelaskan situasi dengan detail&#10;- Sertakan informasi yang relevan&#10;- Tulis dengan jelas dan menyentuh hati"
+            maxLength={1000}
+          />
+          <p className="text-xs text-gray-500 mt-1">{form.story.length}/1000 karakter</p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block font-semibold mb-2">Status Campaign</label>
+            <select 
+              value={form.status} 
+              onChange={e => setForm({ ...form, status: e.target.value })} 
+              className="w-full border-2 rounded-lg px-4 py-3"
+            >
+              <option value="active">🟢 Active (Tampil di website)</option>
+              <option value="inactive">⚫ Inactive (Tersembunyi)</option>
+            </select>
+            <p className="text-xs text-gray-600 mt-1">Campaign inactive tidak akan muncul di halaman publik</p>
+          </div>
+
+          <div className="flex items-center">
+            <label className="flex items-center gap-3 cursor-pointer p-4 border-2 rounded-lg hover:bg-gray-50 w-full">
+              <input 
+                type="checkbox" 
+                checked={form.urgent} 
+                onChange={e => setForm({ ...form, urgent: e.target.checked })} 
+                className="w-6 h-6"
+              />
+              <div>
+                <span className="font-semibold block">🔥 Tandai sebagai MENDESAK</span>
+                <span className="text-xs text-gray-600">Campaign akan ditampilkan di slider urgent</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div className="flex gap-3 pt-4 border-t-2">
+          <button 
+            type="submit" 
+            className="flex-1 flex items-center justify-center gap-2 text-white py-4 rounded-lg font-semibold shadow-lg hover:shadow-xl transition"
+            style={{ background: `linear-gradient(135deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` }}
+          >
+            <Save size={22} /> {campaign ? 'Update Campaign' : 'Simpan Campaign Baru'}
+          </button>
+          <button 
+            type="button" 
+            onClick={onCancel} 
+            className="px-8 flex items-center gap-2 border-2 py-4 rounded-lg font-semibold hover:bg-gray-50"
+          >
+            <XCircle size={22} /> Batal
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
@@ -461,29 +983,94 @@ function Calculator({ navigate }) {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
-      <button onClick={() => navigate('home')} className="mb-6" style={{ color: CONFIG.primaryColor }}>← Kembali</button>
+      <button onClick={() => navigate('home')} className="mb-6 flex items-center gap-2" style={{ color: CONFIG.primaryColor }}>
+        ← Kembali
+      </button>
+      
       <div className="bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-3xl font-bold mb-8">Kalkulator Zakat</h1>
+        <h1 className="text-3xl font-bold mb-4">Kalkulator Zakat Maal</h1>
+        <p className="text-gray-600 mb-8">Hitung zakat harta (maal) yang wajib Anda tunaikan</p>
+        
         <div className="mb-6">
           <label className="block font-semibold mb-2">Jumlah Harta (Rp)</label>
-          <input type="number" value={amount} onChange={e => setAmount(e.target.value)} className="w-full border rounded px-4 py-3" />
+          <input 
+            type="number" 
+            value={amount} 
+            onChange={e => setAmount(e.target.value)} 
+            className="w-full border-2 rounded-lg px-4 py-4 text-lg" 
+            placeholder="100000000"
+            min="0"
+          />
+          {amount && (
+            <p className="text-sm text-gray-600 mt-2">
+              = Rp {(parseInt(amount) / 1000000).toFixed(1)} Juta
+            </p>
+          )}
         </div>
+        
         {amount && (
-          <div className="p-6 rounded border-2" style={{ backgroundColor: `${CONFIG.primaryColor}10`, borderColor: CONFIG.primaryColor }}>
-            <p className="mb-2">Nisab: Rp {nisab.toLocaleString()}</p>
+          <div className="p-6 rounded-lg border-2" style={{ backgroundColor: `${CONFIG.primaryColor}10`, borderColor: CONFIG.primaryColor }}>
+            <div className="mb-4">
+              <p className="text-sm text-gray-700 mb-1">Nisab Zakat (setara 85 gram emas):</p>
+              <p className="font-semibold text-lg">Rp {nisab.toLocaleString()}</p>
+            </div>
+            
             {amount >= nisab ? (
               <div>
-                <p className="text-3xl font-bold mb-4" style={{ color: CONFIG.primaryColor }}>Rp {zakat.toLocaleString()}</p>
-                <p className="mb-4">✓ Harta mencapai nisab</p>
-                <button onClick={() => navigate('home')} className="w-full text-white py-3 rounded font-semibold" style={{ background: `linear-gradient(135deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` }}>
-                  Bayar Zakat
+                <div className="mb-4">
+                  <p className="text-sm text-gray-700 mb-1">Zakat yang harus dibayar (2.5%):</p>
+                  <p className="text-4xl font-bold mb-2" style={{ color: CONFIG.primaryColor }}>
+                    Rp {zakat.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    = Rp {(zakat / 1000000).toFixed(2)} Juta
+                  </p>
+                </div>
+                
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                  <p className="text-green-800 font-semibold flex items-center gap-2">
+                    <CheckCircle size={20} /> Harta Anda mencapai nisab
+                  </p>
+                  <p className="text-sm text-green-700 mt-1">
+                    Anda wajib menunaikan zakat sebesar Rp {zakat.toLocaleString()}
+                  </p>
+                </div>
+                
+                <button 
+                  onClick={() => navigate('home', 'zakat')} 
+                  className="w-full text-white py-4 rounded-lg font-semibold flex items-center justify-center gap-2" 
+                  style={{ background: `linear-gradient(135deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` }}
+                >
+                  <ArrowRight size={20} /> Bayar Zakat Sekarang
                 </button>
               </div>
             ) : (
-              <p className="text-amber-800">Belum mencapai nisab</p>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                <p className="text-amber-800 font-semibold">⚠️ Harta belum mencapai nisab</p>
+                <p className="text-sm text-amber-700 mt-1">
+                  Anda belum wajib zakat, namun tetap dianjurkan untuk berinfaq
+                </p>
+                <button 
+                  onClick={() => navigate('home', 'infaq')} 
+                  className="w-full mt-4 border-2 py-3 rounded-lg font-semibold"
+                  style={{ borderColor: CONFIG.primaryColor, color: CONFIG.primaryColor }}
+                >
+                  Infaq Sekarang
+                </button>
+              </div>
             )}
           </div>
         )}
+        
+        <div className="mt-8 bg-gray-50 rounded-lg p-6">
+          <h3 className="font-bold mb-3">ℹ️ Catatan Penting:</h3>
+          <ul className="text-sm text-gray-700 space-y-2 list-disc list-inside">
+            <li>Nisab zakat = 85 gram emas (sekitar Rp {nisab.toLocaleString()})</li>
+            <li>Zakat ditunaikan sebesar 2.5% dari total harta</li>
+            <li>Harta harus mencapai nisab dan telah dimiliki selama 1 tahun (haul)</li>
+            <li>Harta yang dizakati: uang, emas, perak, aset investasi, dll</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
@@ -493,15 +1080,62 @@ function About({ navigate }) {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-8 text-center">Tentang {CONFIG.platformName}</h1>
+      
       <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-        <p className="text-center mb-6" style={{ color: CONFIG.primaryColor }}>بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</p>
-        <p className="text-gray-700 mb-4">{CONFIG.platformName} adalah platform donasi Islami yang memudahkan umat untuk menyalurkan zakat, wakaf, infaq, dan qurban dengan amanah dan transparan.</p>
+        <p className="text-center mb-6 text-2xl" style={{ color: CONFIG.primaryColor }}>بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</p>
+        <p className="text-gray-700 mb-4 text-lg leading-relaxed">
+          {CONFIG.platformName} adalah platform donasi Islami yang memudahkan umat untuk menyalurkan zakat, wakaf, infaq, dan qurban dengan amanah dan transparan.
+        </p>
+        <p className="text-gray-700 leading-relaxed">
+          Kami berkomitmen untuk mengelola setiap donasi dengan penuh tanggung jawab dan menyalurkannya kepada yang berhak menerima.
+        </p>
       </div>
+      
+      <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <h2 className="text-2xl font-bold mb-6">Hubungi Kami</h2>
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${CONFIG.primaryColor}20` }}>
+              <span className="text-xl">📱</span>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">WhatsApp</p>
+              <p className="font-semibold">{CONFIG.whatsapp}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${CONFIG.primaryColor}20` }}>
+              <span className="text-xl">📧</span>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Email</p>
+              <p className="font-semibold">{CONFIG.email}</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${CONFIG.primaryColor}20` }}>
+              <span className="text-xl">📷</span>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Instagram</p>
+              <p className="font-semibold">{CONFIG.instagram}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div className="bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold mb-4">Hubungi Kami</h2>
-        <p className="mb-2"><strong>WhatsApp:</strong> {CONFIG.whatsapp}</p>
-        <p className="mb-2"><strong>Email:</strong> {CONFIG.email}</p>
-        <p><strong>Instagram:</strong> {CONFIG.instagram}</p>
+        <h2 className="text-2xl font-bold mb-4">Rekening Donasi</h2>
+        <div className="border-2 rounded-lg p-6" style={{ borderColor: CONFIG.primaryColor }}>
+          <p className="text-sm text-gray-600 mb-2">Bank</p>
+          <p className="font-bold text-xl mb-4">{CONFIG.bankName}</p>
+          <p className="text-sm text-gray-600 mb-2">Nomor Rekening</p>
+          <p className="font-bold text-2xl mb-4" style={{ color: CONFIG.primaryColor }}>{CONFIG.accountNumber}</p>
+          <p className="text-sm text-gray-600 mb-2">Atas Nama</p>
+          <p className="font-semibold text-lg">{CONFIG.accountHolder}</p>
+        </div>
       </div>
     </div>
   );
@@ -517,25 +1151,32 @@ function Footer() {
               <Heart size={20} fill="white" />
               <span className="font-bold">{CONFIG.platformName}</span>
             </div>
-            <p className="text-green-200 text-sm">Platform Donasi Islami</p>
+            <p className="text-green-200 text-sm">Platform Donasi Islami Terpercaya</p>
           </div>
           <div>
             <h3 className="font-bold mb-4">Kategori</h3>
             <div className="space-y-2 text-sm text-green-200">
-              <p>Zakat</p>
-              <p>Wakaf</p>
-              <p>Infaq</p>
-              <p>Qurban</p>
+              <p>💎 Zakat</p>
+              <p>🕌 Wakaf</p>
+              <p>🤲 Infaq</p>
+              <p>🐄 Qurban</p>
             </div>
           </div>
           <div>
             <h3 className="font-bold mb-4">Kontak</h3>
-            <p className="text-sm text-green-200">WA: {CONFIG.whatsapp}</p>
-            <p className="text-sm text-green-200">{CONFIG.email}</p>
+            <div className="space-y-2 text-sm text-green-200">
+              <p>📱 {CONFIG.whatsapp}</p>
+              <p>📧 {CONFIG.email}</p>
+              <p>📷 {CONFIG.instagram}</p>
+            </div>
           </div>
           <div>
-            <h3 className="font-bold mb-4">Sosial</h3>
-            <p className="text-sm text-green-200">{CONFIG.instagram}</p>
+            <h3 className="font-bold mb-4">Rekening</h3>
+            <div className="text-sm text-green-200">
+              <p>{CONFIG.bankName}</p>
+              <p className="font-mono">{CONFIG.accountNumber}</p>
+              <p className="text-xs mt-2">a.n. {CONFIG.accountHolder}</p>
+            </div>
           </div>
         </div>
         <div className="border-t border-green-800 mt-8 pt-8 text-center text-green-300 text-sm">
@@ -550,25 +1191,32 @@ function CampaignCard({ campaign, onClick }) {
   const pct = (campaign.collected / campaign.target) * 100;
   
   return (
-    <div onClick={onClick} className="bg-white rounded-xl shadow overflow-hidden cursor-pointer hover:shadow-lg transition">
-      <div className="bg-gray-200 h-48 flex items-center justify-center">
-        <p className="text-gray-500 text-sm">[Foto]</p>
+    <div onClick={onClick} className="bg-white rounded-xl shadow overflow-hidden cursor-pointer hover:shadow-xl transition-all transform hover:-translate-y-1">
+      <div className="bg-gray-200 h-48 flex items-center justify-center relative">
+        <p className="text-gray-500 text-sm">[Foto Campaign]</p>
+        {campaign.urgent && (
+          <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+            🔥 MENDESAK
+          </div>
+        )}
       </div>
-      <div className="p-4">
-        <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: `${CONFIG.primaryColor}20`, color: CONFIG.primaryColor }}>
+      <div className="p-5">
+        <span className="px-3 py-1 rounded-full text-xs font-semibold inline-block mb-3" style={{ backgroundColor: `${CONFIG.primaryColor}20`, color: CONFIG.primaryColor }}>
           {campaign.category.toUpperCase()}
         </span>
-        <h3 className="font-bold mt-2 mb-3 line-clamp-2">{campaign.title}</h3>
-        <div className="mb-3">
+        <h3 className="font-bold text-lg mb-3 line-clamp-2 h-14">{campaign.title}</h3>
+        <div className="mb-4">
           <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
             <div className="h-2 rounded-full" style={{ width: `${Math.min(pct, 100)}%`, background: `linear-gradient(90deg, ${CONFIG.primaryColor}, ${CONFIG.primaryDark})` }}></div>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="font-semibold" style={{ color: CONFIG.primaryColor }}>Rp {(campaign.collected / 1000000).toFixed(1)} Jt</span>
+            <span className="font-bold" style={{ color: CONFIG.primaryColor }}>
+              Rp {(campaign.collected / 1000000).toFixed(1)} Jt
+            </span>
             <span className="text-gray-600">{pct.toFixed(0)}%</span>
           </div>
         </div>
-        <p className="text-sm text-gray-600">{campaign.donors} donatur</p>
+        <p className="text-sm text-gray-600">👥 {campaign.donors} donatur</p>
       </div>
     </div>
   );
